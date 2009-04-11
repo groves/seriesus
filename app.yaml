@@ -1,0 +1,15 @@
+application: seriesus
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
+
+- url: /static
+  static_dir: static
+
+- url: .*
+  script: seriesus/__init__.py
