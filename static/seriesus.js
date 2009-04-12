@@ -1,6 +1,3 @@
-function noop() {
-}
-
 function logError(message) {
     return function(transaction, error) {
         console.log(message, error);
@@ -45,7 +42,8 @@ function createTable(tableName, columns) {
     db.transaction(function(transaction) {
         var sql = "CREATE TABLE IF NOT EXISTS " + tableName + "(" + columns + ", __synced INTEGER, " +
                   "__key VARCHAR(500));";
-        transaction.executeSql(sql, [], noop, logError("Error creating " + tableName));
+        transaction.executeSql(sql, [], function() {
+        }, logError("Error creating " + tableName));
     });
 }
 function insert(tableName, values) {
