@@ -25,8 +25,9 @@ function displaySeries(name, key) {
         }
         $(seriesSelector + " table").before('<span id="' + key + 'deleter">' +
                                             '<p class="warning">Delete this series?</p>' +
-                                            '<a href="#">OK</a> <a href="#">Cancel</a></span>');
-        $(seriesSelector + ':contains(OK)').click(function() {
+                                            '<a class="ok" href="#">OK</a> ' +
+                                            '<a class="cancel" href="#">Cancel</a></span>');
+        $(seriesSelector + ' .ok').click(function() {
             db.transaction(function(transaction) {
                 transaction.executeSql("DELETE FROM Series WHERE __key = ?", [key], function(transaction, results) {
                     transaction.executeSql("DELETE FROM Value WHERE series = ?", [key], function() {
@@ -36,7 +37,7 @@ function displaySeries(name, key) {
                 }, logError("Unable to delete series " + key));
             });
         });
-        $(seriesSelector + ":contains(Cancel)").click(function() {
+        $(seriesSelector + " .cancel").click(function() {
             $(seriesSelector + "deleter").remove();
             return false;
         });
