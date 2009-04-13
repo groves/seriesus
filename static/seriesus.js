@@ -5,33 +5,75 @@ function logError(message) {
 }
 
 function displayValue(time, value, series, key) {
-    $("#" + series + " ul form").before('<li id="' + key + '">' + new Date(time) + " - " + value + "</li>");
+    var timeStr = new Date(time).format("HH:MM");
+    var html = '<tr id="' + key + '"><td class="value">' + value + '</td><td class="time">' + timeStr +
+               '</td><td class="delete"><a href="#delete">x</a></td></tr>';
+    $("#" + series + " table tr:last").before(html);
 
 }
 
 function displaySeries(name, key) {
-    $("#series_title").show();
-    $("#series").append('<li id="' + key + '"><h4>' + name + '</h4><ul>' +
-                        '<form class="add_value" action="/value/add" method="post" class="span-16 last">' +
-                        '<label for="value">Value</label>' +
-                        '<input type="text" name="value" />' +
-                        '<input type="submit" value="Add" />' +
-                        '</form></ul></li>');
+    $("#series").append('<li id="' + key + '"><a href="#' + name + '"><h3>' + name +
+                        ' <a class="delete" href="#delete">x</a></h3></a><table>' +
+                        '<tr><td><form class="add_value" action="/value/add" method="post">' +
+                        '<input type="text" name="value" size="6" />' +
+                        '</form></td></tr></table></li>');
+    var seriesSelector = "#" + key;
+    $(seriesSelector + " .delete").click(function() {
+        if($(seriesSelector + "deleter").size() > 0) {
+            return false;
+        }
+        $(seriesSelector + " table").before('<span id="' + key + 'deleter">' +
+                                            '<p class="warning">Do you really want to delete this series?  All ' +
+                                            'values will also be deleted.</p>' +
+                                            '<a href="#">OK</a> <a href="#">Cancel</a></span>');
+        $(seriesSelector + ':contains(OK)').click(function() {
+            db.transaction(function(transaction) {
+                transaction.executeSql("DELETE FROM Series WHERE __key = ?", [key], function(transaction, results) {
+                    transaction.executeSql("DELETE FROM Value WHERE series = ?", [key], function() {
+                    }, logError("Unable to delete values for series " + key));
+                    $(seriesSelector).remove();
+                    $("#show_all").click();
+                }, logError("Unable to delete series " + key));
+            });
+        });
+        $(seriesSelector + ":contains(Cancel)").click(function() {
+            $(seriesSelector + "deleter").remove();
+            return false;
+        });
+        return false;
+    });
+    $("#" + key + " a").click(function() {
+        $("#add_series").hide();
+        $("li:not(#" + key + ")").hide();
+        $("#show_all").show();
+        $(".delete").show();
+        $("#show_all").click(function() {
+            $("#add_series").show();
+            $("li:not(#" + key + ")").show();
+            $("#show_all").hide();
+            $(".delete").hide();
+        });
+    });
 
     db.transaction(function(transaction) {
-        transaction.executeSql("SELECT * from Value WHERE series = ? ORDER BY time;", [key],
+        transaction.executeSql("SELECT * FROM Value WHERE series = ? ORDER BY time;", [key],
                 function(transaction, results) {
                     var rows = results.rows;
                     for (var i = 0; i < rows.length; i++) {
                         var value = rows.item(i);
                         displayValue(value.time, value.value, value.series, value.__key);
                     }
-                }, logError("Unable to select series"))
+                }, logError("Unable to select series"));
     });
     $("#series form:last").submit(function() {
-        var value = new Number($(this).find("[name=value]").attr("value"));
-        var time = new Date().getTime();
-        displayValue(time, value, key, insert("Value", [time, "testemail", value, key]));
+        var value = parseFloat(($(this).find("[name=value]").attr("value")));
+        if (isNaN(value)) {
+            // TODO - display error
+        } else {
+            var time = new Date().getTime();
+            displayValue(time, value, key, insert("Value", [time, "testemail", value, key]));
+        }
         return false;
     });
 }
@@ -55,7 +97,7 @@ function insert(tableName, values) {
         for (var i = 0; i < values.length; i++) {
             params.push("?");
         }
-        params.join(", ")
+        params.join(", ");
         transaction.executeSql("INSERT INTO " + tableName + " VALUES(" + params + ")", values,
                 function(transaction, results) {
                     console.log("Inserted", tableName, results);
@@ -69,7 +111,6 @@ createTable("Value", "time INTEGER, creator VARCHAR(500), value FLOAT, " +
                      "series VARCHAR(500) CONSTRAINT fk REFERENCES Series(__key)");
 
 $(function() {
-    $("#series_title").hide();
     $("#add_series").submit(function() {
         var name = $("#name").attr("value");
         displaySeries(name, insert("Series", [name, "testuser"]));
@@ -81,6 +122,9 @@ $(function() {
             for (var i = 0; i < rows.length; i++) {
                 displaySeries(rows.item(i).name, rows.item(i).__key);
             }
-        }, logError("Unable to select series"))
+            if (document.location.hash) {
+                $("[href=" + document.location.hash + "]").click();
+            }
+        }, logError("Unable to select series"));
     });
 });
