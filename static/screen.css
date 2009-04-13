@@ -26,12 +26,12 @@ label {
     font-weight: bold;
 }
 
-a {
+.inactive {
     color: black;
     text-decoration: none;
 }
 
-a:hover {
+.inactive:hover {
     color: blue;
     text-decoration: underline;
 }

@@ -7,14 +7,14 @@ function logError(message) {
 function displayValue(time, value, series, key) {
     var timeStr = new Date(time).format("HH:MM");
     var html = '<tr id="' + key + '"><td class="value">' + value + '</td><td class="time">' + timeStr +
-               '</td><td class="delete"><a href="#delete">x</a></td></tr>';
+               '</td><td class="delete"><a class="inactive" href="#delete">x</a></td></tr>';
     $("#" + series + " table tr:last").before(html);
 
 }
 
 function displaySeries(name, key) {
-    $("#series").append('<li id="' + key + '"><a href="#' + name + '"><h3>' + name +
-                        ' <a class="delete" href="#delete">x</a></h3></a><table>' +
+    $("#series").append('<li id="' + key + '"><a class="inactive" href="#' + name + '"><h3>' + name +
+                        ' <a class="delete inactive" href="#delete">x</a></h3></a><table>' +
                         '<tr><td><form class="add_value" action="/value/add" method="post">' +
                         '<input type="text" name="value" size="6" />' +
                         '</form></td></tr></table></li>');
@@ -24,8 +24,7 @@ function displaySeries(name, key) {
             return false;
         }
         $(seriesSelector + " table").before('<span id="' + key + 'deleter">' +
-                                            '<p class="warning">Do you really want to delete this series?  All ' +
-                                            'values will also be deleted.</p>' +
+                                            '<p class="warning">Delete this series?</p>' +
                                             '<a href="#">OK</a> <a href="#">Cancel</a></span>');
         $(seriesSelector + ':contains(OK)').click(function() {
             db.transaction(function(transaction) {
