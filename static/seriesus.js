@@ -7,8 +7,16 @@ function logError(message) {
 function displayValue(time, value, series, key) {
     var timeStr = new Date(time).format("HH:MM");
     var html = '<tr id="' + key + '"><td class="value">' + value + '</td><td class="time">' + timeStr +
-               '</td><td class="delete"><a class="inactive" href="#delete">x</a></td></tr>';
+               '</td><td class="delete"><a class="delete inactive" href="">x</a></td></tr>';
     $("#" + series + " table tr:last").before(html);
+    $("#" + key + " .delete").click(function(){
+        db.transaction(function(transaction){
+            transaction.executeSql("DELETE from Value WHERE __key = ?", [key], function(transaction, results){
+                $("#" + key).remove();
+            }, logError("Unable to delete value " + key));
+        });
+        return false;
+    });
 
 }
 
@@ -20,7 +28,7 @@ function displaySeries(name, key) {
                         '</form></td></tr></table></li>');
     var seriesSelector = "#" + key;
     $(seriesSelector + " .delete").click(function() {
-        if($(seriesSelector + "deleter").size() > 0) {
+        if ($(seriesSelector + "deleter").size() > 0) {
             return false;
         }
         $(seriesSelector + " table").before('<span id="' + key + 'deleter">' +
@@ -113,7 +121,12 @@ createTable("Value", "time INTEGER, creator VARCHAR(500), value FLOAT, " +
 $(function() {
     $("#add_series").submit(function() {
         var name = $("#name").attr("value");
-        displaySeries(name, insert("Series", [name, "testuser"]));
+
+        if (name == "") {
+            //TODO = display error
+        } else {
+            displaySeries(name, insert("Series", [name, "testuser"]));
+        }
         return false;
     });
     db.transaction(function(transaction) {
