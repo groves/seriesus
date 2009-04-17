@@ -9,15 +9,15 @@ function displayValue(time, value, series, key) {
     var html = '<tr id="' + key + '"><td class="value">' + value + '</td><td class="time">' + timeStr +
                '</td><td class="delete"><a class="delete inactive" href="">x</a></td></tr>';
     $("#" + series + " table tr:last").before(html);
-    $("#" + key + " .delete").click(function(){
-        db.transaction(function(transaction){
-            transaction.executeSql("DELETE from Value WHERE __key = ?", [key], function(transaction, results){
-                $("#" + key).remove();
-            }, logError("Unable to delete value " + key));
+    $("#" + key + " .delete").click(function() {
+        db.transaction(function(transaction) {
+            transaction.executeSql("UPDATE Value SET __deleted = 1 WHERE __key = ?", [key],
+                    function(transaction, results) {
+                        $("#" + key).remove();
+                    }, logError("Unable to delete value " + key));
         });
         return false;
     });
-
 }
 
 function displaySeries(name, key) {
@@ -28,26 +28,13 @@ function displaySeries(name, key) {
                         '</form></td></tr></table></li>');
     var seriesSelector = "#" + key;
     $(seriesSelector + " .delete").click(function() {
-        if ($(seriesSelector + "deleter").size() > 0) {
-            return false;
-        }
-        $(seriesSelector + " table").before('<span id="' + key + 'deleter">' +
-                                            '<p class="warning">Delete this series?</p>' +
-                                            '<a class="ok" href="#">OK</a> ' +
-                                            '<a class="cancel" href="#">Cancel</a></span>');
-        $(seriesSelector + ' .ok').click(function() {
-            db.transaction(function(transaction) {
-                transaction.executeSql("DELETE FROM Series WHERE __key = ?", [key], function(transaction, results) {
-                    transaction.executeSql("DELETE FROM Value WHERE series = ?", [key], function() {
-                    }, logError("Unable to delete values for series " + key));
-                    $(seriesSelector).remove();
-                    $("#show_all").click();
-                }, logError("Unable to delete series " + key));
-            });
-        });
-        $(seriesSelector + " .cancel").click(function() {
-            $(seriesSelector + "deleter").remove();
-            return false;
+        db.transaction(function(transaction) {
+            transaction.executeSql("UPDATE Series SET __deleted = 1 WHERE __key = ?", [key], function(transaction, results) {
+                transaction.executeSql("UPDATE Value SET __deleted = 1 WHERE series = ?", [key], function() {
+                }, logError("Unable to delete values for series " + key));
+                $(seriesSelector).remove();
+                $("#show_all").click();
+            }, logError("Unable to delete series " + key));
         });
         return false;
     });
@@ -65,7 +52,7 @@ function displaySeries(name, key) {
     });
 
     db.transaction(function(transaction) {
-        transaction.executeSql("SELECT * FROM Value WHERE series = ? ORDER BY time;", [key],
+        transaction.executeSql("SELECT * FROM Value WHERE series = ? and __deleted = 0 ORDER BY time;", [key],
                 function(transaction, results) {
                     var rows = results.rows;
                     for (var i = 0; i < rows.length; i++) {
@@ -91,7 +78,7 @@ var db = openDatabase("seriesus", "1.0", "Seriesus Database", 65536);
 function createTable(tableName, columns) {
     db.transaction(function(transaction) {
         var sql = "CREATE TABLE IF NOT EXISTS " + tableName + "(" + columns + ", __synced INTEGER, " +
-                  "__key VARCHAR(500));";
+                  "__key VARCHAR(500), __deleted INTEGER);";
         transaction.executeSql(sql, [], function() {
         }, logError("Error creating " + tableName));
     });
@@ -101,6 +88,7 @@ function insert(tableName, values) {
     db.transaction(function(transaction) {
         values.push(0);// Never synced on insert
         values.push(key);
+        values.push(0);// Never deleted on insert
         var params = [];
         for (var i = 0; i < values.length; i++) {
             params.push("?");
@@ -112,6 +100,13 @@ function insert(tableName, values) {
                 }, logError("Unable to insert series"));
     });
     return key;
+}
+
+if(false) {
+    db.transaction(function(transaction){
+        transaction.executeSql("DROP TABLE Value");
+        transaction.executeSql("DROP TABLE Series");
+    }), function(){}, logError("Error dropping tables");
 }
 
 createTable("Series", "name VARCHAR(500), creator VARCHAR(500)");
@@ -130,7 +125,7 @@ $(function() {
         return false;
     });
     db.transaction(function(transaction) {
-        transaction.executeSql("SELECT * from Series;", [], function(transaction, results) {
+        transaction.executeSql("SELECT * from Series WHERE __deleted = 0;", [], function(transaction, results) {
             var rows = results.rows;
             for (var i = 0; i < rows.length; i++) {
                 displaySeries(rows.item(i).name, rows.item(i).__key);
