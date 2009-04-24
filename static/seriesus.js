@@ -68,6 +68,7 @@ function displaySeries(name, key) {
         } else {
             var time = new Date().getTime();
             displayValue(time, value, key, insert("Value", [time, "testemail", value, key]));
+            $(this).clearForm();
         }
         return false;
     });
@@ -121,6 +122,7 @@ $(function() {
             //TODO = display error
         } else {
             displaySeries(name, insert("Series", [name, "testuser"]));
+            $(this).clearForm();
         }
         return false;
     });
