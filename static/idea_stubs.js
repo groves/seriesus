@@ -13,4 +13,4 @@ function openDatabase(name, version, description, size) {
 }
 var console = {log:function() {
 }};
-$ = window.$;
+var $ = window.$;

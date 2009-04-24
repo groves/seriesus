@@ -2,7 +2,7 @@ from google.appengine.ext import db
 
 class Series(db.Model):
     creator = db.UserProperty(required=True, auto_current_user_add=True)
-    name= db.StringProperty(required=True)
+    name = db.StringProperty(required=True)
 
 class Value(db.Model):
     creator = db.UserProperty(required=True, auto_current_user_add=True)
