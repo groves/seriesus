@@ -1,23 +1,36 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <title>seriesus</title>
-    <link rel="stylesheet" href="/static/screen.css" type="text/css" media="screen, projection">
-    <script type="text/javascript" src="/static/jquery-1.3.2.js"></script>
-    <script type="text/javascript" src="/static/jquery.form-2.25.js"></script>
-    <script type="text/javascript" src="/static/Math.uuid.js"></script>
-    <script type="text/javascript" src="/static/date.format.js"></script>
-    <script type="text/javascript" src="/static/seriesus.js"></script>
-</head>
-<body>
-<ul id="series">
-</ul>
-<form id="add_series" action="/series/add" method="post">
-    <h3>Add a series</h3>
-    <label for="name">Name</label>
-    <input id="name" type="text" name="name"/>
-    <input type="submit" value="Add"/>
-</form>
-<a id="show_all" href="#"><h3>Show All</h3></a>
-</body>
+    <head>
+        <title>seriesus</title>
+        <link rel="stylesheet" href="/static/screen.css" type="text/css" media="screen, projection">
+        <script type="text/javascript" src="/static/jquery-1.3.2.js"></script>
+        <script type="text/javascript" src="/static/jquery.form-2.25.js"></script>
+        <script type="text/javascript" src="/static/jquery.example-1.4.2.js"></script>
+        <script type="text/javascript" src="/static/Math.uuid.js"></script>
+        <script type="text/javascript" src="/static/date.format.js"></script>
+        <script type="text/javascript" src="/static/seriesus.js"></script>
+        <script type="text/javascript">
+            $(seriesus.init);
+        </script>
+    </head>
+    <body>
+        <h1>Seriesus</h1>
+        <ul id="series">
+        </ul>
+        <form id="add_series" action="/series/add" method="post">
+            <h3>Add a series:</h3>
+            <input class="name" type="text" name="name"/>
+            <input type="submit" value="Add"/>
+        </form>
+        <textarea id="series_template" class="template">
+            <ul id="{series_id}">
+                <h4>{series_name}</h4>
+                <form action="/value/add" method="post">
+                    <h4>Add a value:</h4>
+                    <input class="value" type="text" name="value"/>
+                    <input type="submit" value="Add"/>
+                </form>
+            </ul>
+        </textarea>
+    </body>
 </html>

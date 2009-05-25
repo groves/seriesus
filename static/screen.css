@@ -24,21 +24,19 @@ h4 {
 
 label {
     font-weight: bold;
+    font-size: 75%;
 }
 
-.inactive {
-    color: black;
-    text-decoration: none;
+form h3, form h4 {
+    display: inline;
 }
 
-.inactive:hover {
-    color: blue;
-    text-decoration: underline;
+.example {
+    color: #666;
 }
 
-.time, .delete {
-    font-size: 70%;
-    color: #666666;
+.template {
+    display: none;
 }
 
 h3 a {
@@ -51,8 +49,4 @@ h3 a {
 
 .value {
     text-align: right;
-}
-
-#show_all {
-    display: none;
 }
