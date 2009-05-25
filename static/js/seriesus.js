@@ -26,7 +26,9 @@ var seriesus = function () {
                     success: function(response) {
                         addSeries(response.series);
                         // Focus input in the newly added series
-                        $("#" + response.series.id + " .value").focus();
+                        $('#' + response.series.id + ' .value').focus();
+                        // Explicitly blur the name field on success to get the example back
+                        $('#add_series .name').blur();
                     }
                 });
             $.get('/series', {}, function(data) {
