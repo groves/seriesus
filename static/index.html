@@ -3,11 +3,12 @@
     <head>
         <title>seriesus</title>
         <link rel="stylesheet" href="/static/screen.css" type="text/css" media="screen, projection">
-        <script type="text/javascript" src="/static/js/jquery-1.3.2.js"></script>
-        <script type="text/javascript" src="/static/js/jquery.form-2.25.js"></script>
-        <script type="text/javascript" src="/static/js/jquery.example-1.4.2.js"></script>
-        <script type="text/javascript" src="/static/js/Math.uuid.js"></script>
-        <script type="text/javascript" src="/static/js/date.format.js"></script>
+        <script type="text/javascript" src="/static/js/lib/jquery.js"></script>
+        <script type="text/javascript" src="/static/js/lib/jquery.form.js"></script>
+        <script type="text/javascript" src="/static/js/lib/jquery.example.js"></script>
+        <script type="text/javascript" src="/static/js/lib/Math.uuid.js"></script>
+        <script type="text/javascript" src="/static/js/lib/date.format.js"></script>
+        <script type="text/javascript" src="/static/js/live.js"></script>
         <script type="text/javascript" src="/static/js/seriesus.js"></script>
         <script type="text/javascript">
             $(seriesus.init);
@@ -20,7 +21,7 @@
         <form id="add_series" action="/series/add" method="post">
             <h3>Add a series:</h3>
             <input class="name" type="text" name="name"/>
-            <input type="submit" value="Add"/>
+            <input name="submit_add_series" type="submit" value="Add"/>
         </form>
         <textarea id="series_template" class="template">
             <ul id="{series_id}">
