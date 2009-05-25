@@ -43,7 +43,13 @@ class AddSeries(JsonHandler):
                     key_name="k" + self.extract("id", value))
             val.put()
         # Superclass will indicate success
-        return {"series": {"name": series.name, "id": series.key().id_or_name()}}
+        return {"series": series.jsonify()}
 
-urls = [('/series/add', AddSeries)]
+class ListSeries(webapp.RequestHandler):
+    def get(self):
+        self.response.out.write(json.dumps({"series":
+            [series.jsonify() for series in Series.all()]}))
+
+
+urls = [('/series/add', AddSeries), ('/series', ListSeries)]
 

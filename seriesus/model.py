@@ -4,6 +4,9 @@ class Series(db.Model):
     creator = db.UserProperty(required=True, auto_current_user_add=True)
     name = db.StringProperty(required=True)
 
+    def jsonify(self):
+        return {"name":self.name, "id": self.key().name()}
+
 class Value(db.Model):
     creator = db.UserProperty(required=True, auto_current_user_add=True)
     time = db.DateTimeProperty(required=True)

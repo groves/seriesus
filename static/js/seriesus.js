@@ -8,9 +8,13 @@ var seriesus = function () {
             var display = $('#series_template').template({
                     series_id: value.id,
                     series_name: value.name});
-            // Add the ul for the series and move the cursor to its value field
-            $('#series').prepend(display).find(".value").focus();
+            // Add the ul for the series
+            $('#series').append(display);
         });
+    function addSeries(seriesJson) {
+        seriesus.allSeries.put(seriesJson.name,
+            new seriesus.Series(seriesJson.name, seriesJson.id));
+    }
     return {
         allSeries: allSeries,
         init: function() {
@@ -20,10 +24,14 @@ var seriesus = function () {
                     dataType: 'json',
                     data: {id: Math.uuid()},
                     success: function(response) {
-                        seriesus.allSeries.put(response.series.name,
-                            new seriesus.Series(response.series.name, response.series.id));
+                        addSeries(response.series);
+                        // Focus input in the newly added series
+                        $("#" + response.series.id + " .value").focus();
                     }
                 });
+            $.get('/series', {}, function(data) {
+                    $.each(data.series, function() { addSeries(this); });
+                }, 'json');
         },
         Series: Series
     };
