@@ -8,6 +8,7 @@
         <script type="text/javascript" src="/static/js/lib/jquery.example.js"></script>
         <script type="text/javascript" src="/static/js/lib/Math.uuid.js"></script>
         <script type="text/javascript" src="/static/js/lib/date.format.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.template.js"></script>
         <script type="text/javascript" src="/static/js/live.js"></script>
         <script type="text/javascript" src="/static/js/seriesus.js"></script>
         <script type="text/javascript">
@@ -19,16 +20,16 @@
         <ul id="series">
         </ul>
         <form id="add_series" action="/series/add" method="post">
-            <h3>Add a series:</h3>
+            <label>Series:</label>
             <input class="name" type="text" name="name"/>
             <input name="submit_add_series" type="submit" value="Add"/>
         </form>
         <textarea id="series_template" class="template">
             <ul id="{series_id}">
-                <h4>{series_name}</h4>
-                <form action="/value/add" method="post">
-                    <h4>Add a value:</h4>
-                    <input class="value" type="text" name="value"/>
+                <h3>{series_name}</h3>
+                <form class="add_value" action="/value/add" method="post">
+                    <label>Value:</label>
+                    <input class="value" type="text" name="value" size="7"/>
                     <input type="submit" value="Add"/>
                 </form>
             </ul>

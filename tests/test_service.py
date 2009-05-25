@@ -16,18 +16,17 @@ class TestService:
 
     def testAddSeriesNoData(self):
         response = self.app.post('/series/add')
-        response.mustcontain("false", "series must be given")
+        response.mustcontain("false", "name must be given")
 
     def testAddEmptySeries(self):
-        response = self.app.post('/series/add',
-                {'series': json.dumps({"name":"test", "id":"1234"})})
+        response = self.app.post('/series/add', {"name":"test", "id":"1234"})
         response.mustcontain("success", "true")
         series = Series.all().filter("name = ", "test").get()
         eq_('k1234', series.key().id_or_name())
 
     def testAddSingleValueSeries(self):
-        response = self.app.post('/series/add', {'series': json.dumps({"name":"test", "id":"1234",
-            "values":[{"time":1234, "value":1.0, "id":"5678"}]})})
+        response = self.app.post('/series/add', {"name":"test", "id":"1234",
+            "values":json.dumps([{"time":1234, "value":1.0, "id":"5678"}])})
         response.mustcontain("success", "true")
         series = Series.all().filter("name = ", "test").get()
         vals = list(series.values)

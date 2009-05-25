@@ -34,20 +34,16 @@ class AddSeries(JsonHandler):
             self.fail("Expected '%s' in json posted" % name)
 
     def json(self):
-        param = self.require("series")
-        try:
-            data = json.loads(param)
-        except ValueError, e:
-            self.fail("Malformed json: %s" % e)
         # Prefix the UUID from the client with k as it may start with a number
-        series = Series(name=self.extract("name", data), key_name="k" + self.extract("id", data))
+        series = Series(name=self.require("name"), key_name="k" + self.require("id"))
         series.put()
-        for value in data.get('values', []):
+        for value in json.loads(self.request.get('values', '[]')):
             val = Value(time=datetime.fromtimestamp(self.extract("time", value)/1000.0),
                     value=self.extract("value", value), series=series, parent=series,
                     key_name="k" + self.extract("id", value))
             val.put()
-        return {} # Superclass will indicate success
+        # Superclass will indicate success
+        return {"series": {"name": series.name, "id": series.key().id_or_name()}}
 
 urls = [('/series/add', AddSeries)]
 
