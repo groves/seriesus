@@ -5,7 +5,7 @@ class Series(db.Model):
     name = db.StringProperty(required=True)
 
     def jsonify(self):
-        return {"name":self.name, "id": self.key().name()}
+        return {"name":self.name, "key": str(self.key())}
 
 class Value(db.Model):
     creator = db.UserProperty(required=True, auto_current_user_add=True)

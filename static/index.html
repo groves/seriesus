@@ -12,27 +12,37 @@
         <script type="text/javascript" src="/static/js/live.js"></script>
         <script type="text/javascript" src="/static/js/seriesus.js"></script>
         <script type="text/javascript">
-            $(seriesus.init);
+            $(seriesus.displayFullListing);
         </script>
     </head>
     <body>
-        <h1>Seriesus</h1>
-        <ul id="series">
-        </ul>
-        <form id="add_series" action="/series/add" method="post">
-            <label>Series:</label>
-            <input class="name" type="text" name="name"/>
-            <input name="submit_add_series" type="submit" value="Add"/>
-        </form>
-        <textarea id="series_template" class="template">
-            <ul id="{series_id}">
-                <h3>{series_name}</h3>
-                <form class="add_value" action="/value/add" method="post">
-                    <label>Value:</label>
-                    <input class="value" type="text" name="value" size="7"/>
-                    <input type="submit" value="Add"/>
+        <div id="content">
+        </div>
+        <div id="templates">
+            <textarea id="full_listing">
+                <h1>Seriesus</h1>
+                <ul id="series">
+                </ul>
+                <form id="add_series" action="/series/add" method="post">
+                    <label>Series:</label>
+                    <input class="name" type="text" name="name"/>
+                    <input name="submit_add_series" type="submit" value="Add"/>
                 </form>
-            </ul>
-        </textarea>
+            </textarea>
+            <textarea id="compact_series">
+                <ul id="{series_key}">
+                    <h3 class="series_name">{series_name}</h3>
+                    <form class="add_value" action="/value/add" method="post">
+                        <label>Value:</label>
+                        <input type="text" name="value" size="7"/>
+                        <input type="submit" value="Add"/>
+                    </form>
+                </ul>
+            </textarea>
+            <textarea id="full_series">
+                <h1><span class="displayFullListing">Seriesus</span> > {series_name}</h1>
+                <a class="delete">Delete</a>
+            </textarea>
+        </div>
     </body>
 </html>

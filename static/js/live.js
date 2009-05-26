@@ -14,6 +14,9 @@ var live = function(){
             this.listeners[i](key, val);
         }
     };
+    Dict.prototype.get = function(key) {
+        return this.store[key];
+    };
     return {
         Dict:Dict
     };

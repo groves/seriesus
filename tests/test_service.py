@@ -1,4 +1,5 @@
 from django.utils import simplejson as json
+from google.appengine.ext.db import Key
 
 from nose.tools import eq_
 from webtest import TestApp
@@ -23,6 +24,13 @@ class TestService:
         response.mustcontain("success", "true")
         series = Series.all().filter("name = ", "test").get()
         eq_('k1234', series.key().id_or_name())
+
+    def testAutokeySeries(self):
+        response = self.app.post('/series/add', {"name":"test"})
+        response.mustcontain("success", "true")
+        returnedSeries = json.loads(response.body)['series']
+        series = Series.get(Key(returnedSeries["key"]))
+        eq_("test", series.name)
 
     def testAddSingleValueSeries(self):
         response = self.app.post('/series/add', {"name":"test", "id":"1234",

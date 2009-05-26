@@ -43,16 +43,12 @@ form h3, form h4 {
     color: #666;
 }
 
-.template {
+#templates {
     display: none;
 }
 
 h3 a {
     display:inline;
-}
-
-.delete {
-    display: none;
 }
 
 .value {

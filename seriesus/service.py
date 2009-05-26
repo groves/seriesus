@@ -35,12 +35,21 @@ class AddSeries(JsonHandler):
 
     def json(self):
         # Prefix the UUID from the client with k as it may start with a number
-        series = Series(name=self.require("name"), key_name="k" + self.require("id"))
+        name = self.require("name")
+        id = self.request.get("id")
+        if id:
+            series = Series(name=name, key_name="k" + id)
+        else:
+            series = Series(name=name)
         series.put()
         for value in json.loads(self.request.get('values', '[]')):
-            val = Value(time=datetime.fromtimestamp(self.extract("time", value)/1000.0),
-                    value=self.extract("value", value), series=series, parent=series,
-                    key_name="k" + self.extract("id", value))
+            time = datetime.fromtimestamp(self.extract("time", value)/1000.0)
+            if 'id' in value:
+                val = Value(time=time, value=self.extract("value", value), series=series,
+                        parent=series, key_name="k" + value['id'])
+            else:
+                val = Value(time=time, value=self.extract("value", value), series=series,
+                        parent=series)
             val.put()
         # Superclass will indicate success
         return {"series": series.jsonify()}
