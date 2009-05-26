@@ -50,3 +50,18 @@ class TestService:
         response = self.app.post('/series/add', {'series': json.dumps({"name":"test", "id":"1234",
             "values":[{"time":1234, "id":"5678"}]})})
         response.mustcontain("false")
+
+    def testDelete(self):
+        series = Series(name="test")
+        series.put()
+        self.app.post("/series/delete", {'key':str(series.key())})
+        eq_(None, Series.get(series.key()))
+
+    def testAddValue(self):
+        series = Series(name="test")
+        series.put()
+        response = self.app.post("/value/add", {"value":1234, "seriesKey":str(series.key())})
+        response.mustcontain("success", "true")
+        series = Series.get(series.key())
+        eq_(1, series.values.count())
+        eq_(1234, series.values[0].value)

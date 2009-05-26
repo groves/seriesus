@@ -30,14 +30,16 @@
                 </form>
             </textarea>
             <textarea id="compact_series">
-                <ul id="{series_key}">
+                <li id="{series_key}">
                     <h3 class="series_name">{series_name}</h3>
+                    <ul>
+                    </ul>
                     <form class="add_value" action="/value/add" method="post">
                         <label>Value:</label>
                         <input type="text" name="value" size="7"/>
                         <input type="submit" value="Add"/>
                     </form>
-                </ul>
+                </li>
             </textarea>
             <textarea id="full_series">
                 <h1><span class="displayFullListing">Seriesus</span> > {series_name}</h1>

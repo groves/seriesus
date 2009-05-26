@@ -1,3 +1,4 @@
+import calendar
 from google.appengine.ext import db
 
 class Series(db.Model):
@@ -15,3 +16,7 @@ class Value(db.Model):
 
     def __str__(self):
         return "Value(creator=%s, time=%s, value=%s)" % (self.creator, self.time, self.value)
+
+    def jsonify(self):
+        return {"value":self.value, "time":calendar.timegm(self.time.utctimetuple()),
+                "key":str(self.key())}

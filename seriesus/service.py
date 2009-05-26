@@ -15,6 +15,12 @@ class JsonHandler(webapp.RequestHandler):
             self.fail("%s must be given" % param)
         return val
 
+    def extract(self, name, data):
+        try:
+            return data[name]
+        except KeyError:
+            self.fail("Expected '%s' in json posted" % name)
+
     def fail(self, reason):
         self.response.out.write(json.dumps({"success":False, "reason":reason}))
         raise HandledError
@@ -35,13 +41,15 @@ class JsonGetter(JsonHandler):
     def get(self):
         self.handle()
 
-class AddSeries(JsonPoster):
-    def extract(self, name, data):
-        try:
-            return data[name]
-        except KeyError:
-            self.fail("Expected '%s' in json posted" % name)
+def createValue(value, series, time, id=None):
+    if id:
+        val = Value(time=time, value=value, series=series, parent=series, key_name='k' + id)
+    else:
+        val = Value(time=time, value=value, series=series, parent=series)
+    val.put()
+    return val
 
+class AddSeries(JsonPoster):
     def json(self):
         # Prefix the UUID from the client with k as it may start with a number
         name = self.require("name")
@@ -53,14 +61,14 @@ class AddSeries(JsonPoster):
         series.put()
         for value in json.loads(self.request.get('values', '[]')):
             time = datetime.fromtimestamp(self.extract("time", value)/1000.0)
-            if 'id' in value:
-                val = Value(time=time, value=self.extract("value", value), series=series,
-                        parent=series, key_name="k" + value['id'])
-            else:
-                val = Value(time=time, value=self.extract("value", value), series=series,
-                        parent=series)
-            val.put()
+            createValue(self.extract("value", value), series, time, value.get("id", None))
         return {"series": series.jsonify()}
+
+class AddValue(JsonPoster):
+    def json(self):
+        series = Series.get(Key(self.require('seriesKey')))
+        return {"value":
+                createValue(float(self.require("value")), series, datetime.utcnow()).jsonify()}
 
 class DeleteSeries(JsonPoster):
     def json(self):
@@ -71,5 +79,6 @@ class ListSeries(JsonGetter):
     def json(self):
         return {"series": [series.jsonify() for series in Series.all()]}
 
-urls = [('/series/add', AddSeries), ('/series', ListSeries), ('/series/delete', DeleteSeries)]
+urls = [('/series/add', AddSeries), ('/series', ListSeries), ('/series/delete', DeleteSeries),
+        ('/value/add', AddValue)]
 
