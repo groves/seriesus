@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
+from google.appengine.ext.db import Key
 
 from model import Series, Value
 
@@ -18,7 +19,7 @@ class JsonHandler(webapp.RequestHandler):
         self.response.out.write(json.dumps({"success":False, "reason":reason}))
         raise HandledError
 
-    def post(self):
+    def handle(self):
         try:
             data = self.json()
             data["success"] = True
@@ -26,7 +27,15 @@ class JsonHandler(webapp.RequestHandler):
         except HandledError:
             pass # Something blew up and we already told the client about it
 
-class AddSeries(JsonHandler):
+class JsonPoster(JsonHandler):
+    def post(self):
+        self.handle()
+
+class JsonGetter(JsonHandler):
+    def get(self):
+        self.handle()
+
+class AddSeries(JsonPoster):
     def extract(self, name, data):
         try:
             return data[name]
@@ -51,14 +60,16 @@ class AddSeries(JsonHandler):
                 val = Value(time=time, value=self.extract("value", value), series=series,
                         parent=series)
             val.put()
-        # Superclass will indicate success
         return {"series": series.jsonify()}
 
-class ListSeries(webapp.RequestHandler):
-    def get(self):
-        self.response.out.write(json.dumps({"series":
-            [series.jsonify() for series in Series.all()]}))
+class DeleteSeries(JsonPoster):
+    def json(self):
+        Series.get(Key(self.require("key"))).delete()
+        return {}
 
+class ListSeries(JsonGetter):
+    def json(self):
+        return {"series": [series.jsonify() for series in Series.all()]}
 
-urls = [('/series/add', AddSeries), ('/series', ListSeries)]
+urls = [('/series/add', AddSeries), ('/series', ListSeries), ('/series/delete', DeleteSeries)]
 

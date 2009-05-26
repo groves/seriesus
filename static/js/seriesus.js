@@ -34,10 +34,10 @@ var seriesus = function () {
         var displayed = $('#series').append(display);
         displayed.find('.series_name').click(function() {
                 $('#content').html($('#full_series').template({series_name: value.name }));
-            });
-        displayed.find('.delete').click(function() {
-                $.post('/series/delete', {key: value.key}, displayFullListing);
-            });
+                $('.delete').click(function() {
+                        $.post('/series/delete', {key: value.key}, displayFullListing);
+                    });
+        });
     });
     $('.displayFullListing').live('click', displayFullListing);
     return {
