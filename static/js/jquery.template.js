@@ -16,14 +16,15 @@ jQuery.fn.template = function(values) {
         throw "Template value isn't a string: " + template;
     }
  
-    // Now that we have the proper value, we have to replace in the mapped values. Loop over each
-    // value that was passed in.
-    var safeStrEscaper = new RegExp("([\\[\\]\\.\\+\\*\\{\\}\\(\\)\\$\\?\\-])", "gi");
-    $.each(values, function(key, value) { 
-        // Escape all the special values in the key so that it can be used in a regular expression.
-        var safeKey = key.replace(safeStrEscaper, "\\$1");
-        // Replace the value.
-        template = template.replace(new RegExp("\\{" + safeKey + "\\}", "gi"), value); });
+    // Now that we have a proper template, we have to replace the mapped values
+    if (values) {
+        var safeStrEscaper = new RegExp("([\\[\\]\\.\\+\\*\\{\\}\\(\\)\\$\\?\\-])", "gi");
+        $.each(values, function(key, value) { 
+            // Escape all the special values in the key so that it can be used in a regexp.
+            var safeKey = key.replace(safeStrEscaper, "\\$1");
+            // Replace the value.
+            template = template.replace(new RegExp("\\{" + safeKey + "\\}", "gi"), value); });
+    }
 
     // At this point, our HTML will have fully replaced values. Now, let's convert it into a jQuery
     // DOM element and return it.
