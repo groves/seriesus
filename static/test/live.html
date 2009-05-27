@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="/static/js/jquery-1.3.2.js"></script>
+        <script src="/static/js/lib/jquery.js"></script>
         <link media="screen" href="testsuite.css" type="text/css" rel="stylesheet">
         <script src="/static/test/js/testrunner.js"></script>
         <script src="/static/js/live.js"></script>
@@ -11,11 +11,19 @@
                     expect(2);
                     var dict = new live.Dict();
                     dict.addPutListener(function(key, val) {
-                        called = true;
                         equals(key, "foo");
                         equals(val, "bar");
                     });
                     dict.put("foo", "bar");
+                });
+                module("Live Lists");
+                test("Adding to List", function() {
+                    expect(1);
+                    var list = new live.List();
+                    list.addPushListener(function(item) {
+                        equals(item, "foo");
+                    });
+                    list.push("foo");
                 });
             });
         </script>

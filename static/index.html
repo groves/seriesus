@@ -12,14 +12,14 @@
         <script type="text/javascript" src="/static/js/live.js"></script>
         <script type="text/javascript" src="/static/js/seriesus.js"></script>
         <script type="text/javascript">
-            $(seriesus.displayFullListing);
+            $(seriesus.displayMultiseries);
         </script>
     </head>
     <body>
         <div id="content">
         </div>
         <div id="templates">
-            <textarea id="full_listing">
+            <textarea id="multiseries">
                 <h1>Seriesus</h1>
                 <ul id="series">
                 </ul>
@@ -32,14 +32,20 @@
             <textarea id="compact_series">
                 <li id="{series_key}">
                     <h3 class="series_name">{series_name}</h3>
-                    <ul>
-                    </ul>
+                    <table>
+                    </table>
                     <form class="add_value" action="/value/add" method="post">
                         <label>Value:</label>
                         <input type="text" name="value" size="7"/>
                         <input type="submit" value="Add"/>
                     </form>
                 </li>
+            </textarea>
+            <textarea id="compact_value">
+                <tr>
+                    <td class="value">{value}</td>
+                    <td class="time">{time}</td>
+                </tr>
             </textarea>
             <textarea id="full_series">
                 <h1><span class="displayFullListing">Seriesus</span> > {series_name}</h1>

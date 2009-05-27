@@ -54,3 +54,8 @@ h3 a {
 .value {
     text-align: right;
 }
+
+.time {
+    font-size: 75%;
+    color: #555;
+}

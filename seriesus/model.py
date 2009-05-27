@@ -6,7 +6,8 @@ class Series(db.Model):
     name = db.StringProperty(required=True)
 
     def jsonify(self):
-        return {"name":self.name, "key": str(self.key())}
+        return {"name":self.name, "key": str(self.key()),
+                "values":[v.jsonify() for v in self.values]}
 
 class Value(db.Model):
     creator = db.UserProperty(required=True, auto_current_user_add=True)
@@ -18,5 +19,5 @@ class Value(db.Model):
         return "Value(creator=%s, time=%s, value=%s)" % (self.creator, self.time, self.value)
 
     def jsonify(self):
-        return {"value":self.value, "time":calendar.timegm(self.time.utctimetuple()),
+        return {"value":self.value, "time":calendar.timegm(self.time.utctimetuple()) * 1000,
                 "key":str(self.key())}

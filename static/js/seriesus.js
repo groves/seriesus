@@ -1,15 +1,24 @@
 var seriesus = function () {
     var allSeries = new live.Dict();
-    function Series(name, key) {
+    function Series(name, key, values) {
         this.name = name;
         this.key = key;
+        this.values = new live.List();
+    }
+    Series.prototype.addValue = function(valueJson) {
+        this.values.push(new Value(valueJson.value, new Date(valueJson.time)));
+    }
+    function Value(val, time) {
+        this.value = val;
+        this.time = time;
     }
     function addSeries(seriesJson) {
-        seriesus.allSeries.put(seriesJson.key,
-            new seriesus.Series(seriesJson.name, seriesJson.key));
+        var series = new Series(seriesJson.name, seriesJson.key)
+        allSeries.put(seriesJson.key, series);
+        $.each(seriesJson.values, function() { series.addValue(this); });
     }
-    function displayFullListing() {
-        $('#content').html($('#full_listing').template());
+    function displayMultiseries() {
+        $('#content').html($('#multiseries').template());
         $('input.name').example("Name", $('input#name'));
         $('#add_series').ajaxForm({
                 clearForm: true,
@@ -32,17 +41,29 @@ var seriesus = function () {
                 series_name: value.name});
         // Add the ul for the series
         var displayed = $('#series').append(display);
+        displayed.find(".add_value").ajaxForm({
+                clearForm: true,
+                dataType: 'json',
+                data: {seriesKey: value.key},
+                success: function(response) {
+                    allSeries.get(value.key).addValue(response.value);
+                }
+            });
+        value.values.addPushListener(function(val) {
+                displayed.find('table').append($('#compact_value').template({
+                            value:val.value,
+                            time:val.time.format("yyyy/m/d h:MM")
+                        }));
+            });
         displayed.find('.series_name').click(function() {
                 $('#content').html($('#full_series').template({series_name: value.name }));
                 $('.delete').click(function() {
-                        $.post('/series/delete', {key: value.key}, displayFullListing);
+                        $.post('/series/delete', {key: value.key}, displayMultiseries);
                     });
         });
     });
-    $('.displayFullListing').live('click', displayFullListing);
+    $('.displayMultiseries').live('click', displayMultiseries);
     return {
-        allSeries: allSeries,
-        displayFullListing: displayFullListing,
-        Series: Series
+        displayMultiseries: displayMultiseries,
     };
 }();
