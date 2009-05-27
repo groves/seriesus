@@ -31,6 +31,10 @@ form h3, form h4 {
     display: inline;
 }
 
+th {
+    font-size: 125%;
+}
+
 #add_series {
     margin: 1em 0 0 0;
 }

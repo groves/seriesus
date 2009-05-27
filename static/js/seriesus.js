@@ -12,6 +12,15 @@ var seriesus = function () {
         this.value = val;
         this.time = time;
     }
+    Value.prototype.getDisplayTime = function() {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (this.time > today) {
+            return this.time.format('h:MM');
+        } else {
+            return this.time.format('yyyy/m/d h:MM');
+        }
+    }
     function addSeries(seriesJson) {
         var series = new Series(seriesJson.name, seriesJson.key)
         allSeries.put(seriesJson.key, series);
@@ -52,7 +61,7 @@ var seriesus = function () {
         value.values.addPushListener(function(val) {
                 displayed.find('table').append($('#compact_value').template({
                             value:val.value,
-                            time:val.time.format("yyyy/m/d h:MM")
+                            time:val.getDisplayTime()
                         }));
             });
         displayed.find('.series_name').click(function() {

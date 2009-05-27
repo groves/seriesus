@@ -31,8 +31,10 @@
             </textarea>
             <textarea id="compact_series">
                 <li id="{series_key}">
-                    <h3 class="series_name">{series_name}</h3>
                     <table>
+                        <tr>
+                            <th class="series_name">{series_name}</th>
+                        </tr>
                     </table>
                     <form class="add_value" action="/value/add" method="post">
                         <label>Value:</label>
@@ -48,7 +50,7 @@
                 </tr>
             </textarea>
             <textarea id="full_series">
-                <h1><span class="displayFullListing">Seriesus</span> > {series_name}</h1>
+                <h1><span class="displayMultiseries">Seriesus</span> > {series_name}</h1>
                 <a class="delete">Delete</a>
             </textarea>
         </div>
