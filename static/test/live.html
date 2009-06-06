@@ -16,6 +16,13 @@
                     });
                     dict.put("foo", "bar");
                 });
+                test("Removing from Dict", function() {
+                    var dict = new live.Dict();
+                    function listener() {}
+                    equals(dict.removePutListener(listener), false);
+                    dict.addPutListener(listener);
+                    equals(dict.removePutListener(listener), true);
+                });
                 module("Live Lists");
                 test("Adding to List", function() {
                     expect(1);
@@ -24,6 +31,14 @@
                         equals(item, "foo");
                     });
                     list.push("foo");
+                });
+                test("Removing from List", function () {
+                    var list = new live.List();
+                    function listener() {}
+                    equals(list.removePushListener(listener), false);
+                    list.addPushListener(listener);
+                    equals(list.removePushListener(listener), true);
+
                 });
             });
         </script>
