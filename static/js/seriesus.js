@@ -28,6 +28,36 @@ var seriesus = function () {
     }
     function displayMultiseries() {
         $('#content').html($('#multiseries').template());
+        function putListener(key, value) {
+            // Add the ul for the series
+            var displayed = $('#series').append($('#compact_series').template({
+                        series_key: value.key,
+                        series_name: value.name})).find('#' + value.key);
+            displayed.find(".add_value").ajaxForm({
+                    clearForm: true,
+                    dataType: 'json',
+                    data: {seriesKey: value.key},
+                    success: function(response) {
+                        allSeries.get(value.key).addValue(response.value);
+                    }
+                });
+            function pushListener(val) {
+                displayed.find('table').append($('#compact_value').template({
+                            value:val.value,
+                            time:val.getDisplayTime()
+                        }));
+            }
+            value.values.addPushListener(pushListener);
+            displayed.removed(function() { value.values.removePushListener(pushListener) });
+            displayed.find('.series_name').click(function() {
+                    $('#content').html($('#full_series').template({series_name: value.name }));
+                    $('.delete').click(function() {
+                            $.post('/series/delete', {key: value.key}, displayMultiseries);
+                        });
+            });
+        }
+        allSeries.addPutListener(putListener);
+        $("#series").removed(function () { allSeries.removePutListener(putListener); });
         $('input.name').example("Name", $('input#name'));
         $('#add_series').ajaxForm({
                 clearForm: true,
@@ -44,33 +74,6 @@ var seriesus = function () {
                 $.each(data.series, function() { addSeries(this); });
             }, 'json');
     }
-    allSeries.addPutListener(function(key, value) {
-        var display = $('#compact_series').template({
-                series_key: value.key,
-                series_name: value.name});
-        // Add the ul for the series
-        var displayed = $('#series').append(display);
-        displayed.find(".add_value").ajaxForm({
-                clearForm: true,
-                dataType: 'json',
-                data: {seriesKey: value.key},
-                success: function(response) {
-                    allSeries.get(value.key).addValue(response.value);
-                }
-            });
-        value.values.addPushListener(function(val) {
-                displayed.find('table').append($('#compact_value').template({
-                            value:val.value,
-                            time:val.getDisplayTime()
-                        }));
-            });
-        displayed.find('.series_name').click(function() {
-                $('#content').html($('#full_series').template({series_name: value.name }));
-                $('.delete').click(function() {
-                        $.post('/series/delete', {key: value.key}, displayMultiseries);
-                    });
-        });
-    });
     $('.displayMultiseries').live('click', displayMultiseries);
     return {
         displayMultiseries: displayMultiseries,
