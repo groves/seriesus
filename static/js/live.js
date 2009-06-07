@@ -16,10 +16,15 @@ var live = function(){
         return false;
     }
     ListenerList.prototype.fire = function() {
-       for (var i = 0; i < this.listeners.length; i++) {
-           this.listeners[i].apply(null, arguments);
+        var toRemove = [];
+        for (var i = 0; i < this.listeners.length; i++) {
+            if (this.listeners[i].apply(null, arguments) === false) {
+                toRemove.push(this.listeners[i]);
+            }
         }
-
+        for (var i = 0; i < toRemove.length; i++) {
+            this.remove(toRemove[i]);
+        }
     }
 
     function Dict() {
@@ -60,6 +65,9 @@ var live = function(){
 
     return {
         Dict:Dict,
-        List:List
+        List:List,
+        util: {
+            ListenerList: ListenerList
+        }
     };
 }();

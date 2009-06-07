@@ -26,8 +26,14 @@ var seriesus = function () {
         allSeries.put(seriesJson.key, series);
         $.each(seriesJson.values, function() { series.addValue(this); });
     }
+    var contentSwitchListeners = new live.util.ListenerList();
+    function setContent(templateSelector, params) {
+        params = params || {};
+        contentSwitchListeners.fire(templateSelector);
+        $('#content').html($(templateSelector).template(params));
+    }
     function displayMultiseries() {
-        $('#content').html($('#multiseries').template());
+        setContent('#multiseries');
         function putListener(key, value) {
             // Add the ul for the series
             var displayed = $('#series').append($('#compact_series').template({
@@ -48,16 +54,22 @@ var seriesus = function () {
                         }));
             }
             value.values.addPushListener(pushListener);
-            displayed.removed(function() { value.values.removePushListener(pushListener) });
+            contentSwitchListeners.add(function() {
+                    value.values.removePushListener(pushListener);
+                    return false;
+                });
             displayed.find('.series_name').click(function() {
-                    $('#content').html($('#full_series').template({series_name: value.name }));
+                    setContent('#full_series', {series_name: value.name });
                     $('.delete').click(function() {
                             $.post('/series/delete', {key: value.key}, displayMultiseries);
                         });
             });
         }
         allSeries.addPutListener(putListener);
-        $("#series").removed(function () { allSeries.removePutListener(putListener); });
+        contentSwitchListeners.add(function () {
+                allSeries.removePutListener(putListener);
+                return false;
+            });
         $('input.name').example("Name", $('input#name'));
         $('#add_series').ajaxForm({
                 clearForm: true,

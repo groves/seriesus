@@ -40,6 +40,17 @@
                     equals(list.removePushListener(listener), true);
 
                 });
+                test("Remove on returning false", function () {
+                    var list = new live.List();
+                    var calls = 0;
+                    list.addPushListener(function () { calls++; });
+                    list.addPushListener(function () {  calls++; return 0; });
+                    list.addPushListener(function() {  calls++; return false; });
+                    list.push(0);
+                    equals(calls, 3, "All three listeners should be called");
+                    list.push(1);
+                    equals(calls, 5, "The listener that returned false should be removed");
+                });
             });
         </script>
     </head>
