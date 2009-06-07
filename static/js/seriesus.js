@@ -32,9 +32,18 @@ var seriesus = function () {
         contentSwitchListeners.fire(templateSelector);
         $('#content').html($(templateSelector).template(params));
     }
+    function displaySeries(series) {
+        gibs.update("series", series.key);
+        setContent('#full_series', {series_name: series.name });
+        $('.delete').click(function() {
+                $.post('/series/delete', {key: series.key}, displayMultiseries);
+            });
+    }
     function displayMultiseries() {
         setContent('#multiseries');
-        function putListener(key, value) {
+        gibs.update("series");// Clear out the selected series
+
+        function displayCompactSeries(key, value) {
             // Add the ul for the series
             var displayed = $('#series').append($('#compact_series').template({
                         series_key: value.key,
@@ -58,16 +67,19 @@ var seriesus = function () {
                     value.values.removePushListener(pushListener);
                     return false;
                 });
-            displayed.find('.series_name').click(function() {
-                    setContent('#full_series', {series_name: value.name });
-                    $('.delete').click(function() {
-                            $.post('/series/delete', {key: value.key}, displayMultiseries);
-                        });
-            });
+            displayed.find('.series_name').click(function() { displaySeries(value); });
         }
-        allSeries.addPutListener(putListener);
-        contentSwitchListeners.add(function () {
-                allSeries.removePutListener(putListener);
+
+        allSeries.each(displayCompactSeries);// display all existing series
+
+        allSeries.addPutListener(function(key, value) {// display newly added series
+                displayCompactSeries(key, value);
+                // Focus input in the newly added series
+                $('#' + key + ' .value').focus();
+            });
+
+        contentSwitchListeners.add(function () {// stop trying to display new series if we're removed
+                allSeries.removePutListener(displayCompactSeries);
                 return false;
             });
         $('input.name').example("Name", $('input#name'));
@@ -76,18 +88,23 @@ var seriesus = function () {
                 dataType: 'json',
                 success: function(response) {
                     addSeries(response.series);
-                    // Focus input in the newly added series
-                    $('#' + response.series.key + ' .value').focus();
                     // Explicitly blur the name field on success to get the example back
                     $('#add_series .name').blur();
                 }
             });
-        $.get('/series', {}, function(data) {
-                $.each(data.series, function() { addSeries(this); });
-            }, 'json');
     }
     $('.displayMultiseries').live('click', displayMultiseries);
     return {
-        displayMultiseries: displayMultiseries,
+        init: function() {
+            $.get('/series', {}, function(data) {
+                    $.each(data.series, function() { addSeries(this); });
+                    var selectedSeries = gibs.get("series");
+                    if (selectedSeries) {
+                        displaySeries(allSeries.get(selectedSeries));
+                    } else {
+                        displayMultiseries();
+                    }
+                }, 'json');
+        }
     };
 }();

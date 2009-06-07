@@ -51,6 +51,25 @@
                     list.push(1);
                     equals(calls, 5, "The listener that returned false should be removed");
                 });
+                test("List.each", function () {
+                    var list = new live.List();
+                    list.push(0);
+                    list.push(1);
+                    list.push(2);
+                    var calls = 0;
+                    list.each(function() { calls++; });
+                    equals(calls, 3);
+                    list.each(function(item, idx) {
+                        equals(item, idx);
+                        calls++;
+                    });
+                    equals(calls, 6);
+                    list.each(function() {
+                        calls++;
+                        return false;
+                    });
+                    equals(calls, 7);
+                });
             });
         </script>
     </head>

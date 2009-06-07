@@ -47,6 +47,13 @@ var live = function(){
     Dict.prototype.get = function(key) {
         return this.store[key];
     };
+    Dict.prototype.each = function(callback) {
+        for (var key in this.store) {
+            if (callback(key, this.store[key]) === false) {
+                return;
+            }
+        }
+    }
 
     function List() {
         this.store = [];
@@ -61,6 +68,13 @@ var live = function(){
     }
     List.prototype.removePushListener = function(listener) {
         return this.listeners.remove(listener);
+    }
+    List.prototype.each = function(callback) {
+        for (var i = 0; i < this.store.length; i++) {
+            if (callback(this.store[i], i) === false) {
+                return;
+            }
+        }
     }
 
     return {
