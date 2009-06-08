@@ -58,15 +58,16 @@ var seriesus = function () {
                         allSeries.get(value.key).addValue(response.value);
                     }
                 });
-            function pushListener(val) {
+            function displayValue(val) {
                 displayed.find('table').append($('#compact_value').template({
                             value:val.value,
                             time:val.getDisplayTime()
                         }));
             }
-            value.values.addPushListener(pushListener);
+            value.values.each(displayValue);
+            value.values.addPushListener(displayValue);
             contentSwitchListeners.add(function() {
-                    value.values.removePushListener(pushListener);
+                    value.values.removePushListener(displayValue);
                     return false;
                 });
             displayed.find('.series_name').click(function() { displaySeries(value); });
@@ -75,9 +76,9 @@ var seriesus = function () {
         allSeries.each(displayCompactSeries);// display all existing series
 
         function displayAndFocus(key, value) {// display newly added series
-                displayCompactSeries(key, value);
-                // Focus input in the newly added series
-                $('#' + key + ' .value').focus();
+            displayCompactSeries(key, value);
+            // Focus input in the newly added series
+            $('#' + key + ' .value').focus();
         }
         allSeries.addPutListener(displayAndFocus);
 
