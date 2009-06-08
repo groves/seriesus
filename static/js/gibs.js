@@ -30,7 +30,12 @@ var gibs = {
             $.each(cur, function(key, val) {
                 pieces.push(key + '=' + val);
             });
-            document.location.hash = pieces.join(";");
+            if (pieces.length > 0) {
+                document.location.hash = pieces.join(";");
+            } else if(document.location.hash != "") {
+                // Setting the hash to nothing after there's been something in it causes a page reload
+                document.location.hash = "#";
+            }
         },
 
         /**
