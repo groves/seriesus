@@ -47,6 +47,13 @@ var live = function(){
     Dict.prototype.get = function(key) {
         return this.store[key];
     };
+    Dict.prototype.remove = function(key) {
+        var val = this.store[key];
+        if (val != null) {
+            delete this.store[key];
+        }
+        return val;
+    };
     Dict.prototype.each = function(callback) {
         for (var key in this.store) {
             if (callback(key, this.store[key]) === false) {

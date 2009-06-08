@@ -36,7 +36,9 @@ var seriesus = function () {
         gibs.update("series", series.key);
         setContent('#full_series', {series_name: series.name });
         $('.delete').click(function() {
-                $.post('/series/delete', {key: series.key}, displayMultiseries);
+                allSeries.remove(series.key);
+                $.post('/series/delete', {key: series.key});
+                displayMultiseries();
             });
     }
     function displayMultiseries() {
@@ -72,14 +74,15 @@ var seriesus = function () {
 
         allSeries.each(displayCompactSeries);// display all existing series
 
-        allSeries.addPutListener(function(key, value) {// display newly added series
+        function displayAndFocus(key, value) {// display newly added series
                 displayCompactSeries(key, value);
                 // Focus input in the newly added series
                 $('#' + key + ' .value').focus();
-            });
+        }
+        allSeries.addPutListener(displayAndFocus);
 
         contentSwitchListeners.add(function () {// stop trying to display new series if we're removed
-                allSeries.removePutListener(displayCompactSeries);
+                allSeries.removePutListener(displayAndFocus);
                 return false;
             });
         $('input.name').example("Name", $('input#name'));
