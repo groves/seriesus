@@ -35,10 +35,34 @@ var seriesus = function () {
     function displaySeries(series) {
         gibs.update("series", series.key);
         setContent('#full_series', {series_name: series.name });
+        function displayValue(val) {
+            $('table').append($('#compact_value').template({
+                        value:val.value,
+                        time:val.getDisplayTime()
+                }));
+        }
+        series.values.each(displayValue);
+        series.values.addPushListener(displayValue);
+        contentSwitchListeners.add(function() {
+                series.values.removePushListener(displayValue);
+                return false;
+            });
+        ajaxifyAddValue(series, ".add_value");
         $('.delete').click(function() {
                 allSeries.remove(series.key);
                 $.post('/series/delete', {key: series.key});
                 displayMultiseries();
+            });
+    }
+    function ajaxifyAddValue(series, selector) {
+        selector = selector || "#" + series.key + " .add_value";
+        $(selector).ajaxForm({
+                clearForm: true,
+                dataType: 'json',
+                data: {seriesKey: series.key},
+                success: function(response) {
+                    allSeries.get(series.key).addValue(response.value);
+                }
             });
     }
     function displayMultiseries() {
@@ -50,14 +74,7 @@ var seriesus = function () {
             var displayed = $('#series').append($('#compact_series').template({
                         series_key: value.key,
                         series_name: value.name})).find('#' + value.key);
-            displayed.find(".add_value").ajaxForm({
-                    clearForm: true,
-                    dataType: 'json',
-                    data: {seriesKey: value.key},
-                    success: function(response) {
-                        allSeries.get(value.key).addValue(response.value);
-                    }
-                });
+            ajaxifyAddValue(value);
             function displayValue(val) {
                 displayed.find('table').append($('#compact_value').template({
                             value:val.value,

@@ -53,6 +53,13 @@
             <textarea id="full_series">
                 <h1><span class="displayMultiseries">Seriesus</span> > {series_name}</h1>
                 <a class="delete">Delete</a>
+                <table>
+                </table>
+                <form class="add_value" action="/value/add" method="post">
+                    <label>Value:</label>
+                    <input type="text" name="value" size="7"/>
+                    <input type="submit" value="Add"/>
+                </form>
             </textarea>
         </div>
     </body>

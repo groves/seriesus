@@ -31,15 +31,12 @@ var live = function(){
         this.store = {};
         this.listeners = new ListenerList();
     }
-
     Dict.prototype.addPutListener = function(listener) {
         this.listeners.add(listener);
     };
-
     Dict.prototype.removePutListener = function(listener) {
         return this.listeners.remove(listener);
     }
-
     Dict.prototype.put = function(key, val) {
         this.store[key] = val;
         this.listeners.fire(key, val);
