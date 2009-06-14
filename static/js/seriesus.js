@@ -6,9 +6,11 @@ var seriesus = function () {
         this.values = new live.List();
     }
     Series.prototype.addValue = function(valueJson) {
-        this.values.push(new Value(valueJson.value, new Date(valueJson.time)));
+        this.values.push(new Value(valueJson.key, valueJson.value,
+                new Date(valueJson.time)));
     }
-    function Value(val, time) {
+    function Value(key, val, time) {
+        this.key = key;
         this.value = val;
         this.time = time;
     }
@@ -36,19 +38,29 @@ var seriesus = function () {
         gibs.update("series", series.key);
         setContent('#full_series', {series_name: series.name });
         function displayValue(val) {
-            $('table').append($('#compact_value').template({
+            $('table').append($('#full_value').template({
+                        key:val.key,
                         value:val.value,
                         time:val.getDisplayTime()
                 }));
+            $('#' + val.key + " .delete").click(function() {
+                    series.values.remove(val);
+                    $.post('/value/delete', {key:val.key});
+            });
         }
         series.values.each(displayValue);
         series.values.addPushListener(displayValue);
+        function removeValue(val) {
+            $('#' + val.key).remove();
+        }
+        series.values.addRemoveListener(removeValue);
         contentSwitchListeners.add(function() {
                 series.values.removePushListener(displayValue);
+                series.values.removeRemoveListener(removeValue);
                 return false;
             });
         ajaxifyAddValue(series, ".add_value");
-        $('.delete').click(function() {
+        $('#series_delete').click(function() {
                 allSeries.remove(series.key);
                 $.post('/series/delete', {key: series.key});
                 displayMultiseries();

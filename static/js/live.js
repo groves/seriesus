@@ -6,8 +6,7 @@ var live = function(){
         this.listeners.push(listener);
     }
     ListenerList.prototype.remove = function(listener) {
-        var i = 0;
-        for (; i < this.listeners.length; i++) {
+        for (var i = 0; i < this.listeners.length; i++) {
             if (this.listeners[i] === listener) {
                 this.listeners.splice(i, 1);
                 return true;
@@ -61,17 +60,38 @@ var live = function(){
 
     function List() {
         this.store = [];
-        this.listeners = new ListenerList();
+        this.pushListeners = new ListenerList();
+        this.removeListeners = new ListenerList();
+        if (arguments.length > 0) {
+            this.push.apply(this, arguments);
+        }
     }
-    List.prototype.push = function(item) {
-        this.store.push(item);
-        this.listeners.fire(item);
+    List.prototype.push = function() {
+        for (var i = 0; i < arguments.length; i++) {
+            this.store.push(arguments[i]);
+            this.pushListeners.fire(arguments[i]);
+        }
+    }
+    List.prototype.remove = function(item) {
+        for (var i = 0; i < this.store.length; i++) {
+            if (this.store[i] === item) {
+                this.removeListeners.fire(this.store.splice(i, 1)[0]);
+                return true;
+            }
+        }
+        return false;
     }
     List.prototype.addPushListener = function(listener) {
-        this.listeners.add(listener);
+        this.pushListeners.add(listener);
     }
     List.prototype.removePushListener = function(listener) {
-        return this.listeners.remove(listener);
+        return this.pushListeners.remove(listener);
+    }
+    List.prototype.addRemoveListener = function(listener) {
+        this.removeListeners.add(listener);
+    }
+    List.prototype.removeRemoveListener = function(listener) {
+        return this.removeListeners.remove(listener);
     }
     List.prototype.each = function(callback) {
         for (var i = 0; i < this.store.length; i++) {

@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
@@ -70,6 +72,11 @@ class AddValue(JsonPoster):
         return {"value":
                 createValue(float(self.require("value")), series, datetime.utcnow()).jsonify()}
 
+class DeleteValue(JsonPoster):
+    def json(self):
+        Value.get(Key(self.require('key'))).delete()
+        return {}
+
 class DeleteSeries(JsonPoster):
     def json(self):
         Series.get(Key(self.require("key"))).delete()
@@ -80,5 +87,5 @@ class ListSeries(JsonGetter):
         return {"series": [series.jsonify() for series in Series.all()]}
 
 urls = [('/series/add', AddSeries), ('/series', ListSeries), ('/series/delete', DeleteSeries),
-        ('/value/add', AddValue)]
+        ('/value/add', AddValue), ('/value/delete', DeleteValue)]
 

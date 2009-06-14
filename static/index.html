@@ -52,7 +52,7 @@
             </textarea>
             <textarea id="full_series">
                 <h1><span class="displayMultiseries">Seriesus</span> > {series_name}</h1>
-                <a class="delete">Delete</a>
+                <a id="series_delete">Delete</a>
                 <table>
                 </table>
                 <form class="add_value" action="/value/add" method="post">
@@ -60,6 +60,13 @@
                     <input type="text" name="value" size="7"/>
                     <input type="submit" value="Add"/>
                 </form>
+            </textarea>
+            <textarea id="full_value">
+                <tr id="{key}">
+                    <td class="value">{value}</td>
+                    <td class="time">{time}</td>
+                    <td class="delete">Delete</td>
+                </tr>
             </textarea>
         </div>
     </body>

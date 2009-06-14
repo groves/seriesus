@@ -32,7 +32,7 @@
                     });
                     list.push("foo");
                 });
-                test("Removing from List", function () {
+                test("Removing listener from List", function () {
                     var list = new live.List();
                     function listener() {}
                     equals(list.removePushListener(listener), false);
@@ -40,22 +40,17 @@
                     equals(list.removePushListener(listener), true);
 
                 });
-                test("Remove on returning false", function () {
+                test("Remove listener on returning false", function () {
                     var list = new live.List();
                     var calls = 0;
                     list.addPushListener(function () { calls++; });
                     list.addPushListener(function () {  calls++; return 0; });
                     list.addPushListener(function() {  calls++; return false; });
-                    list.push(0);
-                    equals(calls, 3, "All three listeners should be called");
-                    list.push(1);
+                    list.push(0, 1);
                     equals(calls, 5, "The listener that returned false should be removed");
                 });
                 test("List.each", function () {
-                    var list = new live.List();
-                    list.push(0);
-                    list.push(1);
-                    list.push(2);
+                    var list = new live.List(0, 1, 2);
                     var calls = 0;
                     list.each(function() { calls++; });
                     equals(calls, 3);
@@ -69,6 +64,23 @@
                         return false;
                     });
                     equals(calls, 7);
+                });
+                test("List.remove", function () {
+                    var removed = 0;
+                    var list = new live.List();
+                    var obj1 = {key:"val"};
+                    var obj2 = {key:"val2"};
+                    var obj3 = {key:"val"};
+                    list.addRemoveListener(function(item) {
+                        equals(item, obj1);
+                        removed++;
+                    });
+                    list.push(obj1, obj2, obj3);
+                    list.remove(obj1);
+                    equals(list.store.length, 2);
+                    list.remove(obj1);
+                    equals(list.store.length, 2);
+                    equals(removed, 1);
                 });
             });
         </script>
