@@ -37,6 +37,7 @@ var seriesus = function () {
     function displaySeries(series) {
         gibs.update("series", series.key);
         setContent('#full_series', {series_name: series.name });
+        $('.displayMultiseries').click(displayMultiseries);
         function displayValue(val) {
             $('table').append($('#full_value').template({
                         key:val.key,
@@ -126,7 +127,6 @@ var seriesus = function () {
                 }
             });
     }
-    $('.displayMultiseries').live('click', displayMultiseries);
     return {
         init: function() {
             $.get('/series', {}, function(data) {
