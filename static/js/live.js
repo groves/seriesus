@@ -57,6 +57,13 @@ var live = function(){
             }
         }
     }
+    Dict.prototype.size = function() {
+        var size = 0;
+        for (var key in this.store) {
+            size++;
+        }
+        return size;
+    }
 
     function List() {
         this.store = [];
@@ -99,6 +106,9 @@ var live = function(){
                 return;
             }
         }
+    }
+    List.prototype.size = function() {
+        return this.store.length;
     }
 
     return {
