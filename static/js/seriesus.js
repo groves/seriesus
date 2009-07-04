@@ -8,7 +8,7 @@ var seriesus = function () {
     Series.prototype.addValue = function(valueJson) {
         this.values.push(new Value(valueJson.key, valueJson.value,
                 new Date(valueJson.time)));
-    }
+    };
     function Value(key, val, time) {
         this.key = key;
         this.value = val;
@@ -22,9 +22,9 @@ var seriesus = function () {
         } else {
             return this.time.format('yyyy/m/d h:MM');
         }
-    }
+    };
     function addSeries(seriesJson) {
-        var series = new Series(seriesJson.name, seriesJson.key)
+        var series = new Series(seriesJson.name, seriesJson.key);
         allSeries.put(seriesJson.key, series);
         $.each(seriesJson.values, function() { series.addValue(this); });
     }
@@ -101,6 +101,7 @@ var seriesus = function () {
                     return false;
                 });
             displayed.find('.series_name').click(function() { displaySeries(value); });
+            cbb.transform(displayed);
         }
 
         allSeries.each(displayCompactSeries);// display all existing series
@@ -117,7 +118,7 @@ var seriesus = function () {
                 return false;
             });
         $('input.name').example("Name", $('input#name'));
-        $('#add_series').ajaxForm({
+        cbb.transform($('#add_series').ajaxForm({
                 clearForm: true,
                 dataType: 'json',
                 success: function(response) {
@@ -125,7 +126,7 @@ var seriesus = function () {
                     // Explicitly blur the name field on success to get the example back
                     $('#add_series .name').blur();
                 }
-            });
+            }));
     }
     return {
         init: function() {

@@ -1,25 +1,24 @@
 body {
+    background: #4282b9;
     line-height: 1.2;
     font-family: sans-serif;
-    margin: 0 50px 0 50px;
+    margin: 0;
+    color: #ece829;
+    width: 80%;
 }
 
 ul {
     padding: 0;
-    margin: 0 0 .5em .5em;
     list-style-type: none;
 }
 
-h3, h4 {
-    padding: 0;
+h1 {
+    padding: 0 0 0 15px;
 }
 
-h1, h3 {
-    margin: .5em 0 .5em 0;
-}
-
-h4 {
-    margin: .25em 0 .25em 0;
+h2 {
+    padding: 0 0 0 15px;
+    margin: 0;
 }
 
 label {
@@ -33,14 +32,6 @@ form h3, form h4 {
 
 th {
     font-size: 125%;
-}
-
-#add_series {
-    margin: 1em 0 0 0;
-}
-
-.add_value {
-    margin: 0 0 .5em .5em;
 }
 
 .example {
@@ -63,3 +54,72 @@ h3 a {
     font-size: 75%;
     color: #555;
 }
+
+/* Normal styling */
+.cb {margin:0.5em 0;}
+
+/* Top corners and border */
+.bt {
+    height:15px;
+    margin:0 0 0 1px;
+    background:url(/static/images/box.png) no-repeat 100% 0;
+}
+.bt div {
+    position:relative;
+    left:-1px;
+    width:5px;
+    height:15px;
+    background:url(/static/images/box.png) no-repeat 0 0;
+    font-size:0;
+    line-height:0;
+}
+
+/* Bottom corners and border */
+.bb {
+    height:15px;
+    margin:0 0 0 1px;
+    background:url(/static/images/box.png) no-repeat 100% 100%;
+}
+
+.bb div {
+    position:relative;
+    left:-1px;
+    width:1px;
+    height:15px;
+    background:url(/static/images/box.png) no-repeat 0 100%;
+    font-size:0;
+    line-height:0;
+}
+
+/* Left border */
+.i1 {
+    padding:0 0 0 1px;
+    background:url(/static/images/borders.png) repeat-y 0 0;
+}
+
+/* Right border */
+.i2 {
+    padding:0 6px 0 0;
+    background:url(/static/images/borders.png) repeat-y 100% 0;
+}
+
+/* Wrapper for the content. Use it to set the background colour and insert some padding between the borders and the content. */
+.i3 {
+    display:block;
+    margin:0;
+    padding:1px 10px;
+    background:#19093d;
+}
+
+/* Make the content wrapper auto clearing so it will contain floats (see http://positioniseverything.net/easyclearing.html). */
+.i3:after {
+    content:".";
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+}
+.i3 {display:inline-block;}
+.i3 {display:block;}
+/* Default CSS ends here */
+

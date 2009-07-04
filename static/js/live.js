@@ -4,7 +4,7 @@ var live = function(){
     }
     ListenerList.prototype.add = function(listener) {
         this.listeners.push(listener);
-    }
+    };
     ListenerList.prototype.remove = function(listener) {
         for (var i = 0; i < this.listeners.length; i++) {
             if (this.listeners[i] === listener) {
@@ -13,7 +13,7 @@ var live = function(){
             }
         }
         return false;
-    }
+    };
     ListenerList.prototype.fire = function() {
         var toRemove = [];
         for (var i = 0; i < this.listeners.length; i++) {
@@ -24,7 +24,7 @@ var live = function(){
         for (var i = 0; i < toRemove.length; i++) {
             this.remove(toRemove[i]);
         }
-    }
+    };
 
     function Dict() {
         this.store = {};
@@ -35,7 +35,7 @@ var live = function(){
     };
     Dict.prototype.removePutListener = function(listener) {
         return this.listeners.remove(listener);
-    }
+    };
     Dict.prototype.put = function(key, val) {
         this.store[key] = val;
         this.listeners.fire(key, val);
@@ -56,14 +56,14 @@ var live = function(){
                 return;
             }
         }
-    }
+    };
     Dict.prototype.size = function() {
         var size = 0;
         for (var key in this.store) {
             size++;
         }
         return size;
-    }
+    };
 
     function List() {
         this.store = [];
@@ -78,7 +78,7 @@ var live = function(){
             this.store.push(arguments[i]);
             this.pushListeners.fire(arguments[i]);
         }
-    }
+    };
     List.prototype.remove = function(item) {
         for (var i = 0; i < this.store.length; i++) {
             if (this.store[i] === item) {
@@ -87,29 +87,29 @@ var live = function(){
             }
         }
         return false;
-    }
+    };
     List.prototype.addPushListener = function(listener) {
         this.pushListeners.add(listener);
-    }
+    };
     List.prototype.removePushListener = function(listener) {
         return this.pushListeners.remove(listener);
-    }
+    };
     List.prototype.addRemoveListener = function(listener) {
         this.removeListeners.add(listener);
-    }
+    };
     List.prototype.removeRemoveListener = function(listener) {
         return this.removeListeners.remove(listener);
-    }
+    };
     List.prototype.each = function(callback) {
         for (var i = 0; i < this.store.length; i++) {
             if (callback(this.store[i], i) === false) {
                 return;
             }
         }
-    }
+    };
     List.prototype.size = function() {
         return this.store.length;
-    }
+    };
 
     return {
         Dict:Dict,

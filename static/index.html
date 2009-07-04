@@ -3,11 +3,42 @@
     <head>
         <title>seriesus</title>
         <link rel="stylesheet" href="/static/screen.css" type="text/css" media="screen, projection">
+        <!--[if lt IE 8]>
+        <style type="text/css">
+        /* Required IE fixes
+        ================================================*/
+        /* Serve gif images to IE/Win pre version 7 */
+        * html .i1,
+        * html .i2 {background-image:url(borders.gif);}
+        * html .bt,
+        * html .bt div,
+        * html .bb,
+        * html .bb div {background-image:url(box.gif);}
+        /* Set a height to fix up some rendering issues. */
+        * html .i1,
+        * html .i3 {height:1px;}
+
+        /* Give the absolutely positioned box a width (including IE 7)*/
+        .one {width:70%;}
+
+        /* Custom rules for the buttons */
+        /* All IE versions need a width */
+        .button {width:20em;}
+        /* IE 7 does not need these */
+        * html .button .i1,
+        * html .button .i2 {background:transparent;}
+        * html .button .bt,
+        * html .button .bt div {background-image:url(button.gif);}
+        * html .button .bb,
+        * html .button .bb div {background-image:url(button.gif);}
+        </style>
+        <![endif]-->
         <script type="text/javascript" src="/static/js/lib/jquery.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery.form.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery.example.js"></script>
         <script type="text/javascript" src="/static/js/lib/Math.uuid.js"></script>
         <script type="text/javascript" src="/static/js/lib/date.format.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.cb.js"></script>
         <script type="text/javascript" src="/static/js/jquery.template.js"></script>
         <script type="text/javascript" src="/static/js/live.js"></script>
         <script type="text/javascript" src="/static/js/gibs.js"></script>
@@ -21,7 +52,6 @@
         </div>
         <div id="templates">
             <textarea id="multiseries">
-                <h1>Seriesus</h1>
                 <ul id="series">
                 </ul>
                 <form id="add_series" action="/series/add" method="post">
@@ -32,11 +62,7 @@
             </textarea>
             <textarea id="compact_series">
                 <li id="{series_key}">
-                    <table>
-                        <tr>
-                            <th class="series_name">{series_name}</th>
-                        </tr>
-                    </table>
+                    <h2 class="series_name">{series_name}</h2>
                     <form class="add_value" action="/value/add" method="post">
                         <label>Value:</label>
                         <input type="text" name="value" size="7"/>
