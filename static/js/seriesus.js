@@ -106,52 +106,58 @@ var seriesus = function () {
                 var series = value.values.map(function(val) {
                     return [ val.time.getTime(), val.value ];
                 });
-                if(series.length == 1) {
-                    $.plot(displayed.find(".chart"), [series], {
-                        xaxis : {
-                            mode: "time",
-                            grid : {
-                                length : false
-                            },
-                            min : series[0][0] - 1,
-                            max : series[0][0] + 1,
-                            ticks: function(range) { return [series[0][0]]; }
-                        },
-                        yaxis : {
-                            grid : {
-                                length : false
-                            },
-                            min : series[0][1] - 1,
-                            max : series[0][1] + 1,
-                            ticks: function(range) { return [series[0][1]]; }
-                        },
+                var options = {
+                    xaxis : {
+                        mode : "time",
                         grid : {
-                            borderMode : "onAxes",
-                            color : "#FFFFFF"
-                        },
-                        series : { points : { show: true } }
-                    });
-                } else {
-                    $.plot(displayed.find(".chart"), [series], {
-                        xaxis : {
-                            mode: "time",
-                            grid : {
-                                length : false
-                            },
-                            ticks: function(range) { return [range.min, range.max]; }
-                        },
-                        yaxis : {
-                            grid : {
-                                length : false
-                            },
-                            autoscaleMargin: 0.1,
-                            ticks: function(range) { return [range.min, range.max]; }
-                        },
-                        grid : {
-                            borderMode : "onAxes",
-                            color : "#FFFFFF"
+                            length : false
                         }
-                    });
+                    },
+                    yaxis : {
+                        grid : {
+                            length : false
+                        }
+                    },
+                    grid : {
+                        borderMode : "onAxes",
+                        color : "#FFFFFF"
+                    }
+                };
+                if (series.length == 1) {
+                    var x = series[0][0], y = series[0][1];
+                    $.plot(displayed.find(".chart"), [ series ], $.extend(true,
+                            options, {
+                                xaxis : {
+                                    min : x - 1,
+                                    max : x + 1,
+                                    ticks : [ x ]
+                                },
+                                yaxis : {
+                                    min : y - 1,
+                                    max : y + 1,
+                                    ticks : [ y ]
+                                },
+                                series : {
+                                    points : {
+                                        show : true
+                                    }
+                                }
+                            }));
+                } else {
+                    $.plot(displayed.find(".chart"), [ series ], $.extend(true,
+                            options, {
+                                xaxis : {
+                                    ticks : function(range) {
+                                        return [ range.min, range.max ];
+                                    }
+                                },
+                                yaxis : {
+                                    autoscaleMargin : 0.1,
+                                    ticks : function(range) {
+                                        return [ range.min, range.max ];
+                                    }
+                                }
+                            }));
                 }
                 displayed.find(".add_value").css("padding-top", "40px");
             }
