@@ -1,3 +1,15 @@
+$.viewportHeight = function() {
+    return self.innerHeight ||
+           jQuery.boxModel && document.documentElement.clientHeight ||
+           document.body.clientHeight;
+};
+
+
+$.viewportWidth = function() {
+    return self.innerWidth ||
+           jQuery.boxModel && document.documentElement.clientWidth ||
+           document.body.clientWidth;
+};
 var seriesus = function () {
     var allSeries = new live.Dict();
     function Series(name, key, values) {
@@ -69,6 +81,7 @@ var seriesus = function () {
     }
     function ajaxifyAddValue(series, selector) {
         selector = selector || "#" + series.key + " .add_value";
+        $(selector + " .value").example("Value");
         $(selector).ajaxForm({
                 clearForm: true,
                 dataType: 'json',
@@ -88,18 +101,43 @@ var seriesus = function () {
                         series_key: value.key,
                         series_name: value.name})).find('#' + value.key);
             ajaxifyAddValue(value);
-            function displayValue(val) {
-                displayed.find('table').append($('#compact_value').template({
-                            value:val.value,
-                            time:val.getDisplayTime()
-                        }));
+            function plot() {
+                var series = value.values.map(function(val) {
+                    return [ val.time.getTime(), val.value ];
+                });
+                $.plot(displayed.find(".chart"), [series], {
+                    xaxis : {
+                        mode: "time",
+                        grid : {
+                            length : false
+                        },
+                        ticks: function(range) { return [range.min, range.max]; }
+                    },
+                    yaxis : {
+                        grid : {
+                            length : false
+                        },
+                        autoscaleMargin: 0.1,
+                        ticks: function(range) { return [range.min, range.max]; }
+                    },
+                    grid : {
+                        borderMode : "onAxes",
+                        color : "#FFFFFF"
+                    }
+                });
+                displayed.find(".add_value").css("padding-top", "40px");
             }
-            value.values.each(displayValue);
-            value.values.addPushListener(displayValue);
+            if(value.values.size() > 0) {
+                plot();
+            } else {
+                displayed.find(".chart").hide();
+            }
+            value.values.addPushListener(plot);
             contentSwitchListeners.add(function() {
-                    value.values.removePushListener(displayValue);
+                    value.values.removePushListener(plot);
                     return false;
                 });
+
             displayed.find('.series_name').click(function() { displaySeries(value); });
             cbb.transform(displayed);
         }
@@ -117,7 +155,7 @@ var seriesus = function () {
                 allSeries.removePutListener(displayAndFocus);
                 return false;
             });
-        $('input.name').example("Name", $('input#name'));
+        $('input.name').example("Name");
         cbb.transform($('#add_series').ajaxForm({
                 clearForm: true,
                 dataType: 'json',

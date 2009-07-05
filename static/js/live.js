@@ -107,6 +107,13 @@ var live = function(){
             }
         }
     };
+    List.prototype.map = function(callback) {
+      var mapped = [];
+      for (var i = 0; i < this.store.length; i++) {
+          mapped.push(callback(this.store[i], i));
+      }
+      return mapped;
+    };
     List.prototype.size = function() {
         return this.store.length;
     };

@@ -36,6 +36,7 @@
         <script type="text/javascript" src="/static/js/lib/jquery.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery.form.js"></script>
         <script type="text/javascript" src="/static/js/lib/jquery.example.js"></script>
+        <script type="text/javascript" src="/static/js/lib/jquery.flot.js"></script>
         <script type="text/javascript" src="/static/js/lib/Math.uuid.js"></script>
         <script type="text/javascript" src="/static/js/lib/date.format.js"></script>
         <script type="text/javascript" src="/static/js/jquery.cb.js"></script>
@@ -62,13 +63,14 @@
             </textarea>
             <textarea id="compact_series">
                 <li id="{series_key}">
-                    <h2 class="series_name">{series_name}</h2>
                     <form class="add_value" action="/value/add" method="post">
-                        <label>Value:</label>
-                        <input type="text" name="value" size="7"/>
-                        <input type="submit" value="Add"/>
+                        <input class="value" type="text" name="value" size="7"/>
                     </form>
-                </li>
+                    <div class="data">
+                        <h2 class="series_name">{series_name}</h2>
+                        <div class="chart"></div>
+                    </div>
+            </li>
             </textarea>
             <textarea id="compact_value">
                 <tr>
