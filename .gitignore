@@ -3,3 +3,5 @@ index.yaml
 *.ipr
 *.iws
 all.min.js
+.project
+.settings
