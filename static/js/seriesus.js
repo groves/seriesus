@@ -102,29 +102,57 @@ var seriesus = function () {
                         series_name: value.name})).find('#' + value.key);
             ajaxifyAddValue(value);
             function plot() {
+                displayed.find(".chart").show();
                 var series = value.values.map(function(val) {
                     return [ val.time.getTime(), val.value ];
                 });
-                $.plot(displayed.find(".chart"), [series], {
-                    xaxis : {
-                        mode: "time",
-                        grid : {
-                            length : false
+                if(series.length == 1) {
+                    $.plot(displayed.find(".chart"), [series], {
+                        xaxis : {
+                            mode: "time",
+                            grid : {
+                                length : false
+                            },
+                            min : series[0][0] - 1,
+                            max : series[0][0] + 1,
+                            ticks: function(range) { return [series[0][0]]; }
                         },
-                        ticks: function(range) { return [range.min, range.max]; }
-                    },
-                    yaxis : {
-                        grid : {
-                            length : false
+                        yaxis : {
+                            grid : {
+                                length : false
+                            },
+                            min : series[0][1] - 1,
+                            max : series[0][1] + 1,
+                            ticks: function(range) { return [series[0][1]]; }
                         },
-                        autoscaleMargin: 0.1,
-                        ticks: function(range) { return [range.min, range.max]; }
-                    },
-                    grid : {
-                        borderMode : "onAxes",
-                        color : "#FFFFFF"
-                    }
-                });
+                        grid : {
+                            borderMode : "onAxes",
+                            color : "#FFFFFF"
+                        },
+                        series : { points : { show: true } }
+                    });
+                } else {
+                    $.plot(displayed.find(".chart"), [series], {
+                        xaxis : {
+                            mode: "time",
+                            grid : {
+                                length : false
+                            },
+                            ticks: function(range) { return [range.min, range.max]; }
+                        },
+                        yaxis : {
+                            grid : {
+                                length : false
+                            },
+                            autoscaleMargin: 0.1,
+                            ticks: function(range) { return [range.min, range.max]; }
+                        },
+                        grid : {
+                            borderMode : "onAxes",
+                            color : "#FFFFFF"
+                        }
+                    });
+                }
                 displayed.find(".add_value").css("padding-top", "40px");
             }
             if(value.values.size() > 0) {
