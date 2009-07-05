@@ -4,13 +4,9 @@ runtime: python
 api_version: 1
 
 handlers:
-- url: /
-  static_files: static/index.html
-  upload: static/index.html
-  login: required
-
 - url: /static
   static_dir: static
+  login: optional
 
 - url: .*
   script: seriesus/__init__.py

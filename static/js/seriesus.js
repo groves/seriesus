@@ -148,7 +148,7 @@ var seriesus = function () {
                             options, {
                                 xaxis : {
                                     ticks : function(range) {
-                                        return [ range.min, range.max ];
+                                        return [ range.min, range.max];
                                     }
                                 },
                                 yaxis : {
@@ -161,11 +161,19 @@ var seriesus = function () {
                 }
                 displayed.find(".add_value").css("padding-top", "40px");
             }
-            if(value.values.size() > 0) {
-                plot();
-            } else {
-                displayed.find(".chart").hide();
+            function resize() {
+                var width = $.viewportWidth() * .75;
+                displayed.find(".chart").width(width);
+                displayed.find(".chart").height(width * .2);
+                displayed.closest(".cb").width(width + 100);
+                displayed.closest(".cb").height(width * .3);
+                if(value.values.size() > 0) {
+                    plot();
+                } else {
+                    displayed.find(".chart").hide();
+                }
             }
+            $(window).resize(resize);
             value.values.addPushListener(plot);
             contentSwitchListeners.add(function() {
                     value.values.removePushListener(plot);
@@ -174,6 +182,7 @@ var seriesus = function () {
 
             displayed.find('.series_name').click(function() { displaySeries(value); });
             cbb.transform(displayed);
+            resize();
         }
 
         allSeries.each(displayCompactSeries);// display all existing series
@@ -201,16 +210,16 @@ var seriesus = function () {
             }));
     }
     return {
-        init: function() {
-            $.get('/series', {}, function(data) {
-                    $.each(data.series, function() { addSeries(this); });
-                    var selectedSeries = gibs.get("series");
-                    if (selectedSeries) {
-                        displaySeries(allSeries.get(selectedSeries));
-                    } else {
-                        displayMultiseries();
-                    }
-                }, 'json');
+        init : function() {
+            $.each(initialData, function() {
+                addSeries(this);
+            });
+            var selectedSeries = gibs.get("series");
+            if (selectedSeries) {
+                displaySeries(allSeries.get(selectedSeries));
+            } else {
+                displayMultiseries();
+            }
         }
     };
 }();

@@ -33,18 +33,11 @@
         * html .button .bb div {background-image:url(button.gif);}
         </style>
         <![endif]-->
-        <script type="text/javascript" src="/static/js/lib/jquery.js"></script>
-        <script type="text/javascript" src="/static/js/lib/jquery.form.js"></script>
-        <script type="text/javascript" src="/static/js/lib/jquery.example.js"></script>
-        <script type="text/javascript" src="/static/js/lib/jquery.flot.js"></script>
-        <script type="text/javascript" src="/static/js/lib/Math.uuid.js"></script>
-        <script type="text/javascript" src="/static/js/lib/date.format.js"></script>
-        <script type="text/javascript" src="/static/js/jquery.cb.js"></script>
-        <script type="text/javascript" src="/static/js/jquery.template.js"></script>
-        <script type="text/javascript" src="/static/js/live.js"></script>
-        <script type="text/javascript" src="/static/js/gibs.js"></script>
-        <script type="text/javascript" src="/static/js/seriesus.js"></script>
+        {% for lib in jslibs %}
+            <script type="text/javascript" src="/static/js/{{ lib }}"></script>
+        {% endfor %}
         <script type="text/javascript">
+            var initialData = {{ series }};
             $(seriesus.init);
         </script>
     </head>
